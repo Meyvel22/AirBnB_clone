@@ -16,6 +16,8 @@ class BaseModel:
         updated_at(date): represents the last time the object was updated
     """
 
+    DATE_TIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
+
     def __init__(self, *args, **kwargs):
         """Contructor of the BaseModel class"""
         if not kwargs:

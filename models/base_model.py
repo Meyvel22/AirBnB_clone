@@ -42,10 +42,10 @@ class BaseModel:
 
     def __str__(self):
         """Returns the string representation of the class"""
-        class_name = type(self).__name__
         created_at = self.created_at
         updated_at = self.updated_at
-        return "[{}] ({}) {}" .format(class_name,  created_at, self.__dict__)
+        return "[{}] ({}) {}". format(type(self).__name__, self.id,
+                self.__dict__)
 
     def save(self):
         """
@@ -58,10 +58,15 @@ class BaseModel:
         """
         Returns a dictionary containing all keys and their values
         """
-        properties = {}
+        to_dict = {}
         for key, value in self.__dict__.items():
-            if key == "created_at" or key == "updated_at":
-                properties[key] = value.isoformat()
-            else:
-                properties[key] = value
-        return properties
+            to_dict[key] = value
+
+        to_dict['__class__'] = self.__class__.__name__
+
+        to_dict['created_at'] = self.created_at.isoformat()
+
+        self.updated_at = datetime.now()
+        to_dict['updated_at'] = self.updated_at.isoformat()
+
+        return to_dict

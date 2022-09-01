@@ -16,18 +16,19 @@ class BaseModel:
         updated_at(date): represents the last time the object was updated
     """
 
-    DATE_TIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
-
     def __init__(self, *args, **kwargs):
         """Contructor of the BaseModel class"""
-        DATE_TIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
         if not kwargs:
-            self.id = str(uuid4())
             self.created_at = datetime.utcnow()
             self.updated_at = datetime.utcnow()
-            models.storage.new(self)
         else:
+            if not kwargs.created_at:
+                self.created_at = datetime.utcnow()
+            if not kwargs.updated_at:
+                self.updated_at = datetime.utcnow()
+
             for key, value in kwargs.items():
+                print(kwargs)
                 if key in ("updated_at", "created_at"):
                     self.__dict__[key] = datetime.strptime(
                         value, DATE_TIME_FORMAT)
@@ -35,6 +36,7 @@ class BaseModel:
                     self.__dict__[key] = str(value)
                 else:
                     self.__dict__[key] = value
+        self.id = str(uuid.uuid4())
 
     def __str__(self):
         """Returns the string representation of the class"""
@@ -54,9 +56,10 @@ class BaseModel:
         """
         Returns a dictionary containing all keys and their values
         """
-        properties = set()
+        properties = {}
         for key, value in self.__dict__.items():
             if key == "created_at" or key == "updated_at":
-                properties[key] = value.isoformat().strftime(DATE_TIME_FORMAT)
+                properties[key] = value.isoformat()
             else:
                 properties[key] = value
+        return properties

@@ -24,16 +24,11 @@ class BaseModel:
             self.created_at = datetime.utcnow()
             self.updated_at = datetime.utcnow()
         else:
-            if not kwargs.created_at:
-                self.created_at = datetime.utcnow()
-            if not kwargs.updated_at:
-                self.updated_at = datetime.utcnow()
-
             for key, value in kwargs.items():
                 print(kwargs)
                 if key in ("updated_at", "created_at"):
                     self.__dict__[key] = datetime.strptime(
-                        value, DATE_TIME_FORMAT)
+                        value, '%Y-%m-%dT%H:%M:%S.%f')
                 elif key[0] == "id":
                     self.__dict__[key] = str(value)
                 else:
@@ -45,12 +40,12 @@ class BaseModel:
         created_at = self.created_at
         updated_at = self.updated_at
         return "[{}] ({}) {}". format(type(self).__name__, self.id,
-                self.__dict__)
+                                      self.__dict__)
 
     def save(self):
         """
-        Upates the BaseModel instance and sets the public
-        instance updated_at to the current date
+           Upates the BaseModel instance and sets the public
+           instance updated_at to the current date
         """
         self.updated_at = datetime.now()
 

@@ -45,3 +45,10 @@ class FileStorage:
                     self.__objects[key] = value
         except FileNotFoundError:
             pass
+
+    def update(self, updated_object):
+        """Sets __object to a new dictionary"""
+        if not isinstance(updated_object, dict):
+            return
+            
+        __object = updated_object

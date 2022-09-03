@@ -2,154 +2,198 @@
 """ A program that contains the entry point of the command interpreter """
 
 import cmd
-from datetime import datetime
-from models.base_model import BaseModel
 from shlex import split
-from models.engine.file_storage import FileStorage
-
-storage = FileStorage()
+from models.base_model import BaseModel
+from models.user import User
+from models import storage
+from models.state import State
+from models.city import City
+from models.place import Place
+from models.amenity import Amenity
+from models.review import Review
+from shlex import split
 
 
 class HBNBCommand(cmd.Cmd):
     """ the class entry point of the comaand interpreter """
+    prompt = "(hbnb) "
 
-    __class_names = ["BaseModel"]
-    prompt = '(hbnb) '
+    model_list = ['BaseModel', 'User', 'State',
+                  'City', 'Amenity', "Place", "Review"]
 
-    def do_quit(self, line):
+    def do_quit(self, args):
         """Quit command to exit the program"""
         return True
 
-    def do_EOF(self, line):
+    def do_EOF(self, args):
         """Exits the program at end of file"""
+
         return True
 
     def emptyline(self):
         """Does nothing at an empty line"""
         return False
 
-    def do_create(self, args):
-        args_list = args.split(" ")
+    def onecmd(self, args):
+        if args == "quit":
+            return self.do_quit(args)
+        elif args == "EOF":
+            return self.do_EOF(args)
+        else:
+            cmd.Cmd.onecmd(self, args)
+
+    @classmethod
+    def handle_errors(cls, args, **kwargs):
+        if "all" in kwargs.values():
+            if not args:
+                return False
+
         if not args:
             print("** class name missing **")
-        elif not args_list[0] in HBNBCommand.__class_names:
-            print("** class doesn't exist **")
+            return True
         else:
-            print('creating BaseModel instance')
-            model = BaseModel()
-            storage.new(model)
-            storage.save()
-            print(model.id)
+            args = args.split(" ")   # args becomes a list
+
+        n = len(args)
+
+        if args[0] not in HBNBCommand.model_list:
+            print("** class doesn't exist **")
+            return True
+
+        if 'com' not in kwargs:
+            return False
+
+        for arg in kwargs.values():
+            if arg in ["show", "destroy"]:
+                if n < 2:
+                    print("** instance id missing **")
+                    return True
+
+            if arg == "update":
+                if n < 2:
+                    print("** instance id missing **")
+                    return True
+
+                elif n < 3:
+                    print("** attribute name missing **")
+                    return True
+
+                elif n < 4:
+                    print("** value missing **")
+                    return True
+
+        return False
 
     def do_create(self, args):
-        args_list = args.split(" ")
-        if not args:
-            print("** class name missing **")
-        elif not args_list[0] in HBNBCommand.__class_names:
-            print("** class doesn't exist **")
-        else:
-            print('creating BaseModel instance')
-            model = BaseModel()
-            storage.new(model)
-            storage.save()
-            print(model.id)
+        """Creates a new instance of BaseModel, saves it and prints the id"""
+
+        error = HBNBCommand.handle_errors(args)
+
+        if error:
+            return
+
+        obj = eval(args)()
+        obj.save()
+        print(obj.id)
 
     def do_show(self, args):
         """
         Prints the string representation of an instance based on the
         class name and id
         """
-        args_list = args.split(" ")
-        if not args:
-            print("** class name missing **")
-        elif not args_list[0] in HBNBCommand.__class_names:
-            print("** class doesn't exist **")
-        elif len(args_list) < 2:
-            print("** instance id missing **")
+        error = HBNBCommand.handle_errors(args, com="show")
+
+        if error:
+            return
+
+        args = args.split(" ")
+
+        objects = storage.all()
+        key = ".".join(args)
+        obj = objects.get(key)
+        if obj:
+            print(obj)
         else:
-            class_name, object_id = args_list
-            payload = storage.all().get(".".join(args_list))
+            print("** no instance found **")
 
-            if not payload:
-                print("** no instance found **")
-            else:
-                model = BaseModel(payload)
-                print(model)
-
-    def do_destroy(self, args):
+    def do_destroy(self, args: str):
         """
         Deletes an instance based on the class name and id
         """
-        args_list = args.split(" ")
-        if not args:
-            print("** class name missing **")
-        elif not args_list[0] in HBNBCommand.__class_names:
-            print("** class doesn't exist **")
-        elif len(args_list) < 2:
-            print("** instance id missing **")
+        error = HBNBCommand.handle_errors(args, com="destroy")
+
+        if error:
+            return
+
+        args = args.split()
+        key = f"{args[0]}.{args[1]}"
+
+        objects = storage.all()
+
+        if key in objects and storage.delete(objects[key]):
+            pass
         else:
-            class_name, object_id = args_list
-            _id = "{}.{}".format(class_name, object_id)
-            data_read = storage.all()
-            payload = data_read.get(_id)
-
-            if not payload:
-                return print("** no instance found **")
-
-            del data_read[_id]
-            storage.update(data_read)
-            storage.save()
+            print("** instance not found **")
 
     def do_all(self, args):
         """
         Prints all string representation of all instances based or
         not on the class name
         """
-        args_list = args.split(" ")
+        error = HBNBCommand.handle_errors(args, com="all")
 
-        if len(args_list) >= 1 and args_list[0] not in \
-                HBNBCommand.__class_names:
-            return print("** class doesn't exist **")
-
-        data_read = storage.all()
-        if not data_read:
+        if error:
             return
 
-        for key, item in list(data_read.items()):
-            print(BaseModel(item))
+        args = args.split(" ")
 
-    # def do_update(self, args):
-    #     """
-    #     Updates an instance based on the class name and id by adding or
-    #     updating attribute
-    #     """
-    #     args_list = args.split(" ")
-    #     if not args:
-    #         print("** class name missing **")
-    #     elif not args_list[0] in HBNBCommand.__class_names:
-    #         print("** class doesn't exist **")
-    #     elif len(args_list) < 2:
-    #         print("** instance id missing **")
-    #     else:
-    #         _id = "{}.{}".format(args_list[0], args_list[1])
-    #         data_read = storage.all()
-    #         payload = data_read.get(_id)
-    #         if not payload:
-    #            return print("** no instance found **")
-    #         elif len(args_list) < 3:
-    #             return print("** attribute name missing **")
-    #         elif len(args_list) < 4:
-    #             return print("** value missing **")
+        objects = storage.all()
 
-    #         attribute = args_list[2]
-    #         value = args_list[3]
-    #         model = BaseModel(payload)
-    #         model.__getattr__(attribute, value, value)
-    #         data_read[_id] = payload
-    #         storage.update(data_read)
-    #         print(payload)
-    #         storage.save()
+        if args[0] == "":
+            for obj in objects.values():
+                print(obj)
+
+        else:
+            for key in objects:
+                k = key.split(".")
+                if k[0] == args[0]:
+                    print(objects[key])
+
+    def do_update(self, args):
+        """
+           Updates an instance based on the class name and id by adding or
+           updating attribute
+         """
+        error = HBNBCommand.handle_errors(args, com="update")
+
+        if error:
+            return
+
+        args = args.split()
+        class_name = args[0]
+        id = args[1]
+        attr_name = args[2]
+        attr_value = args[3]
+
+        if "\"" in attr_value:
+            attr_value = attr_value[1:-1]
+
+        if attr_value.isdigit():
+            attr_value = int(attr_value)
+
+        objects = storage.all()
+        key = f"{class_name}.{id}"
+
+        for k in objects:   # obj is pointing to the key
+            if k == key:
+                obj = objects[k]
+                setattr(obj, attr_name, attr_value)
+                # obj.__setattr(attr_name, attr_value)
+                obj.save()
+                return
+
+        print("** instance id not found **")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     HBNBCommand().cmdloop()

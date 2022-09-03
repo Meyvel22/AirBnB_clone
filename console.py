@@ -105,8 +105,8 @@ class HBNBCommand(cmd.Cmd):
         """
         args_list = args.split(" ")
         
-        if len(args_list) >= 2 and args_list[1] not in HBNBCommand.__class_names:
-            return
+        if len(args_list) >= 1 and args_list[0] not in HBNBCommand.__class_names:
+            return print("** class doesn't exist **")
 
         data_read = storage.all()
         if not data_read:

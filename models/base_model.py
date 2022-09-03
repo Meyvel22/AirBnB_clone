@@ -19,23 +19,21 @@ class BaseModel:
 
     DATE_TIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
         """Contructor of the BaseModel class"""
-        if not kwargs:
-            self.created_at = datetime.utcnow()
-            self.updated_at = datetime.utcnow()
+        if kwargs:
+            for key in kwargs.keys():
+                if key != "__class__":
+                    if key not in ["created_at", "updated_at"]:
+                        self.__setattr__(key, kwargs[key])
+                    else:
+                        self.__setattr__(key, datetime.fromisoformat(kwargs[key]))
+                        
         else:
-            for key, value in kwargs.items():
-                print(kwargs)
-                if key in ("updated_at", "created_at"):
-                    self.__dict__[key] = datetime.strptime(
-                        value, '%Y-%m-%dT%H:%M:%S.%f')
-                elif key[0] == "id":
-                    self.__dict__[key] = str(value)
-                else:
-                    self.__dict__[key] = value
-        self.id = str(uuid.uuid4())
-        models.storage.new(self)
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+            models.storage.new(self)
 
     def __str__(self):
         """Returns the string representation of the class"""

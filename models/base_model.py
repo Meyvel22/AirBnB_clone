@@ -22,13 +22,13 @@ class BaseModel:
     def __init__(self, **kwargs):
         """Contructor of the BaseModel class"""
         if kwargs:
-            for key in kwargs.keys():
+            for key, attr in kwargs.items():
                 if key != "__class__":
                     if key not in ["created_at", "updated_at"]:
-                        self.__setattr__(key, kwargs[key])
+                        self.__setattr__(key, attr)
                     else:
-                        self.__setattr__(key, datetime.fromisoformat(kwargs[key]))
-                        
+                        self.__setattr__(key, datetime.fromisoformat(attr))
+
         else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()

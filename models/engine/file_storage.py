@@ -56,5 +56,16 @@ class FileStorage:
         """Sets __object to a new dictionary"""
         if not isinstance(updated_object, dict):
             return
-            
+
         __object = updated_object
+
+    def delete(self, obj):
+        name = obj.__class__.__name__
+        id = obj.id
+        key = ".".join([name, id])
+        if key in FileStorage.__objects:
+            del FileStorage.__objects[key]
+            self.save()
+            return True
+
+        return False

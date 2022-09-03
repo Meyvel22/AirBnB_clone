@@ -17,10 +17,9 @@ class BaseModel:
         updated_at(date): represents the last time the object was updated
     """
 
-    DATE_TIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
-
     def __init__(self, **kwargs):
         """Contructor of the BaseModel class"""
+
         if kwargs:
             for key, attr in kwargs.items():
                 if key != "__class__":
@@ -37,9 +36,10 @@ class BaseModel:
 
     def __str__(self):
         """Returns the string representation of the class"""
+
         created_at = self.created_at
         updated_at = self.updated_at
-        return "[{}] ({}) {}". format(type(self).__name__, self.id,
+        return "[{}] ({}) {}". format(self.__class__.__name__, self.id,
                                       self.__dict__)
 
     def save(self):
@@ -47,6 +47,7 @@ class BaseModel:
            Upates the BaseModel instance and sets the public
            instance updated_at to the current date
         """
+
         self.updated_at = datetime.utcnow()
         models.storage.save()
 
@@ -54,6 +55,7 @@ class BaseModel:
         """
         Returns a dictionary containing all keys and their values
         """
+
         to_dict = {}
         for key, value in self.__dict__.items():
             to_dict[key] = value

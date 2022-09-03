@@ -8,6 +8,8 @@ from shlex import split
 from models.engine.file_storage import FileStorage
 
 storage = FileStorage()
+
+
 class HBNBCommand(cmd.Cmd):
     """ the class entry point of the comaand interpreter """
 
@@ -38,7 +40,7 @@ class HBNBCommand(cmd.Cmd):
             storage.new(model)
             storage.save()
             print(model.id)
-            
+
     def do_create(self, args):
         args_list = args.split(" ")
         if not args:
@@ -54,7 +56,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_show(self, args):
         """
-        Prints the string representation of an instance based on the 
+        Prints the string representation of an instance based on the
         class name and id
         """
         args_list = args.split(" ")
@@ -66,14 +68,14 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
         else:
             class_name, object_id = args_list
-            payload= storage.all().get(".".join(args_list))
+            payload = storage.all().get(".".join(args_list))
 
             if not payload:
                 print("** no instance found **")
             else:
                 model = BaseModel(payload)
                 print(model)
-            
+
     def do_destroy(self, args):
         """
         Deletes an instance based on the class name and id
@@ -93,31 +95,32 @@ class HBNBCommand(cmd.Cmd):
 
             if not payload:
                 return print("** no instance found **")
-            
+
             del data_read[_id]
             storage.update(data_read)
             storage.save()
 
     def do_all(self, args):
         """
-        Prints all string representation of all instances based or 
+        Prints all string representation of all instances based or
         not on the class name
         """
         args_list = args.split(" ")
-        
-        if len(args_list) >= 1 and args_list[0] not in HBNBCommand.__class_names:
+
+        if len(args_list) >= 1 and args_list[0] not in \
+                HBNBCommand.__class_names:
             return print("** class doesn't exist **")
 
         data_read = storage.all()
         if not data_read:
-            return 
-    
+            return
+
         for key, item in list(data_read.items()):
             print(BaseModel(item))
 
     # def do_update(self, args):
     #     """
-    #     Updates an instance based on the class name and id by adding or 
+    #     Updates an instance based on the class name and id by adding or
     #     updating attribute
     #     """
     #     args_list = args.split(" ")
@@ -137,7 +140,7 @@ class HBNBCommand(cmd.Cmd):
     #             return print("** attribute name missing **")
     #         elif len(args_list) < 4:
     #             return print("** value missing **")
-            
+
     #         attribute = args_list[2]
     #         value = args_list[3]
     #         model = BaseModel(payload)
@@ -147,7 +150,6 @@ class HBNBCommand(cmd.Cmd):
     #         print(payload)
     #         storage.save()
 
-        
-    
+
 if __name__ == '__main__':
     HBNBCommand().cmdloop()

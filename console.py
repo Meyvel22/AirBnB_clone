@@ -18,15 +18,15 @@ class HBNBCommand(cmd.Cmd):
 
     def do_quit(self, line):
         """Quit command to exit the program"""
-        raise SystemExit
+        return True
 
     def do_EOF(self, line):
         """Exits the program at end of file"""
-        raise SystemExit
+        return True
 
     def emptyline(self):
         """Does nothing at an empty line"""
-        pass
+        return False
 
     def do_create(self, args):
         args_list = args.split(" ")

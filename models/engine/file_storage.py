@@ -52,6 +52,13 @@ class FileStorage:
         except FileNotFoundError:
             pass
 
+    def update(self, updated_object):
+        """Sets __object to a new dictionary"""
+        if not isinstance(updated_object, dict):
+            return
+
+        __object = updated_object
+
     def delete(self, obj):
         name = obj.__class__.__name__
         id = obj.id

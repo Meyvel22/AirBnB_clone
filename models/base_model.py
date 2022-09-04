@@ -20,18 +20,18 @@ class BaseModel:
     def __init__(self,*args, **kwargs):
         """Contructor of the BaseModel class"""
 
-        if not kwargs:
+        if kwargs:
+            for key, attr in kwargs.items():
+                if key != '__class__':
+                    if key not in ['created_at', 'updated_at']:
+                        self.__setattr__(key, attr)
+                    else:
+                        self.__setattr__(key, datetime.fromisoformat(attr))
+        else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
-            self.updated_at = self.created_at
-            storage.new(self)
-        else:
-            f = "%Y-%m-%dT%H:%M:%S.%f"
-            for key, value in kwargs.items():
-                if key == 'created_at' or key == 'updated_at':
-                    value = datetime.strptime(kwargs[key], f)
-                if key != '__class__':
-                    setattr(self, key, value)
+            self.updated_at = datetime.now()
+            models.storage.new(self)
 
     def __str__(self):
         """Returns the string representation of the class"""

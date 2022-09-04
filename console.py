@@ -11,7 +11,7 @@ from models.city import City
 from models.place import Place
 from models.amenity import Amenity
 from models.review import Review
-from shlex import split
+from models.engine.file_storage import FileStorage
 
 
 class HBNBCommand(cmd.Cmd):
@@ -20,6 +20,17 @@ class HBNBCommand(cmd.Cmd):
 
     model_list = ['BaseModel', 'User', 'State',
                   'City', 'Amenity', "Place", "Review"]
+
+    def precmd(self, line):
+        """When precmd() is called, the 'line' is stripped of [, . ()"] then
+        joined and passed to the interpreter"""
+        if "." in line:
+            line_arg = line.replace('.', ' ').replace(',', ' ')\
+                .replace('(', ' ').replace('"', '').replace(')', ' ')
+            line_arg = line_arg.split()
+            line_arg[0], line_arg[1] = line_arg[1], line_arg[0]
+            line = " ".join(line_arg)
+        return cmd.Cmd().precmd(line)
 
     def do_quit(self, args):
         """Quit command to exit the program"""
@@ -64,7 +75,7 @@ class HBNBCommand(cmd.Cmd):
             return False
 
         for arg in kwargs.values():
-            if arg in ["show", "destroy"]:
+            if arg in ["show", "destroy", "update"]:
                 if n < 2:
                     print("** instance id missing **")
                     return True
@@ -158,6 +169,21 @@ class HBNBCommand(cmd.Cmd):
                 k = key.split(".")
                 if k[0] == args[0]:
                     print(objects[key])
+
+    def do_count(self, line):
+        """ counts the number of instances of the class passed: 'line'"""
+        arg = line.split(" ")
+        store = storage.all()
+        count = 0
+
+        if len(arg) > 0 and arg[0] not in HBNBCommand.class_list:
+            print("** class doesn't exist **")
+        else:
+            key = arg[0]
+            for item in store:
+                if key in item:
+                    count += 1
+            print(count)
 
     def do_update(self, args):
         """

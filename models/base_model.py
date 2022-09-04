@@ -21,23 +21,22 @@ class BaseModel:
         """Contructor of the BaseModel class"""
 
         if kwargs:
-            for key, attr in kwargs.items():
+            for key, value in kwargs.items():
                 if key != '__class__':
                     if key not in ['created_at', 'updated_at']:
-                        self.__setattr__(key, attr)
+                        self.__setattr__(key, value)
                     else:
-                        self.__setattr__(key, datetime.fromisoformat(attr))
+                        self.__setattr__(key, datetime.fromisoformat(value))
         else:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
             models.storage.new(self)
+            models.storage.save()
 
     def __str__(self):
         """Returns the string representation of the class"""
 
-        created_at = self.created_at
-        updated_at = self.updated_at
         return "[{}] ({}) {}". format(self.__class__.__name__, self.id,
                                       self.__dict__)
 

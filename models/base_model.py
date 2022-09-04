@@ -8,17 +8,21 @@ import models
 
 
 class BaseModel:
-    """
-    Defines the BaseModel Class
-
-    Arguments:
-        id(str): a unique identifier for the BaseModel instance
-        created_at(date): represents the time the object was created
-        updated_at(date): represents the last time the object was updated
+    """Definition of the class BaseModel. Defines all common attributes and
+       methods for other classes in the AirBnB project
     """
 
-    def __init__(self,*args, **kwargs):
-        """Contructor of the BaseModel class"""
+    def __init__(self, *args, **kwargs):
+        """
+            Initialize a new instance of the BaseModel class.
+            Also recreate a class instance from a dictiornary.
+            Attributes:
+              id (str) - a unique identification number for each class instance
+              created_at (datetime) - a datetime object indicating the date
+                                    and time the instance was created
+              updated_at (datetime) - a datetime object that is updated every
+                                    time the instance object is modified
+        """
 
         if kwargs:
             for key, value in kwargs.items():
@@ -46,12 +50,16 @@ class BaseModel:
            instance updated_at to the current date
         """
 
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now()
         models.storage.save()
 
     def to_dict(self):
         """
         Returns a dictionary containing all keys and their values
+                - all key/value pairs from the __dict__ of the instance
+                    - the created_at and updated_at attributes in string format
+                      i.e (year-month-day T hour.minute.second.microsecond
+                - a key __class__ whose value is the class of the instance
         """
 
         to_dict = {}

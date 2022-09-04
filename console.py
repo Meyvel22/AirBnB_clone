@@ -228,55 +228,6 @@ class HBNBCommand(cmd.Cmd):
 
         print("** instance id not found **")
 
-    def handle_match(self, match: re.Match):
-        groups = match.groups()
-        if groups[0] not in HBNBCommand.model_list:
-            print("** class doesn't exist **")
-            return
-        if groups[1] not in HBNBCommand.queries:
-            print(f"** unknown query: '{groups[1]}'")
-            return
-        if groups[1] == 'all':
-            args = f"{groups[1]} {groups[0]}"
-            cmd.Cmd.onecmd(self, args)
-            return
-        elif groups[1] == 'count':
-            args = f"{groups[1]} {groups[0]}"
-            cmd.Cmd.onecmd(self, args)
-            return
-        elif groups[1] == 'show':
-            if groups[3]:
-                id = groups[3][1:-1]
-            else:
-                id =""
-            args = f"{groups[1]} {groups[0]} {id}"
-            cmd.Cmd.onecmd(self, args)
-            return
-        elif groups[1] == "destroy":
-            if groups[3]:
-                id = groups[3][1:-1]
-            else:
-                id =""
-            args = f"{groups[1]} {groups[0]} {id}"
-            cmd.Cmd.onecmd(self, args)
-            return
-        elif groups[1] == 'update':
-            if groups[3] and groups[4]:
-                id = groups[3][1:-1]
-                attr_name = groups[4][1:-1]
-            else:
-                id = ""
-                attr_name = ""
-            if "\"" not in groups[5]:
-                attr_value = groups[5]
-            elif groups[5]:
-                attr_value = groups[5][1:-1]
-            else:
-                attr_value = ""
-            args = f"{groups[1]} {groups[0]} {id} {attr_name} {attr_value}"
-            cmd.Cmd.onecmd(self, args)
-            return
-
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()

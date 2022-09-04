@@ -47,14 +47,8 @@ class HBNBCommand(cmd.Cmd):
         """Does nothing at an empty line"""
         return False
 
-    def onecmd(self, args: str):
-        pattern = re.compile(
-            r"(\w+)\.(\w+)\(((\"[\w|-]+\"),?\s?(\"\w+\")?,?\s?(\"?\w+\"?)?)?\)"
-        )
-        match = re.search(pattern, args)
-        if match:
-            self.handle_match(match)
-        elif args == "quit":
+    def onecmd(self, args):
+        if args == "quit":
             return self.do_quit(args)
         elif args == "EOF":
             return self.do_EOF(args)

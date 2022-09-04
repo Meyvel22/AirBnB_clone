@@ -176,7 +176,7 @@ class HBNBCommand(cmd.Cmd):
         store = storage.all()
         count = 0
 
-        if len(arg) > 0 and arg[0] not in HBNBCommand.class_list:
+        if len(arg) > 0 and arg[0] not in HBNBCommand.model_list:
             print("** class doesn't exist **")
         else:
             key = arg[0]

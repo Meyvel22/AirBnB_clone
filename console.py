@@ -138,15 +138,15 @@ class HBNBCommand(cmd.Cmd):
         if error:
             return
 
-        args = args.split(" ")
-        objects = models.storage.all()
-        key = ".".join(args)
+        args = args.split()
+        key = f"{args[0]}.{args[1]}"
 
-        delete = False
-        if key in objects and models.storage.delete(objects[key]):
+        objects = storage.all()
+        
+        if key in objects and storage.delete(objects[key]):
             pass
         else:
-            print("** no instance found **")
+            print("** instance not found **")
 
     def do_all(self, args):
         """

@@ -1,0 +1,56 @@
+i/* Filters style */
+.filters {
+    background-color: white;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
+    height: 70px;
+    width: 100%;
+}
+
+/* Search button style */
+.filters button {
+    background-color: #FF5A5F;
+    border: none;
+    border-radius: 4px;
+    color: #FFFFFF;
+    float: right;
+    font-size: 18px;
+    height: 48px;
+    right: 30px;
+    top: 12px;
+    width: 20%;
+}
+
+/* Search button hover opacity */
+.filters button:hover {
+    opacity: 90%;
+}
+
+/* Locations and amenities style */
+.locations,
+.amenities {
+    display: inline-block;
+    height: 100%;
+    width: 25%;
+    float: left;
+    position: absolute;
+}
+
+/* Locations border */
+.locations {
+    border-right: 1px solid #DDDDDD;
+}
+
+/* Header 3 style */
+.filters.locations h3, .filters.amenities h3 {
+    font-size: 1.17em;
+    font-weight: 600;
+    height: 50%;
+}
+
+/* Header 4 style */
+.filters.locations h4, .filters.amenities h4 {
+    font-size: 14px;
+    font-weight: 400;
+    height: 50%;
+}
